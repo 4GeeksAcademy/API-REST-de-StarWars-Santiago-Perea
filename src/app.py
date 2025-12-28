@@ -8,8 +8,8 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User
-#from models import Person
+from models import db, User, Favorites, People, Planets, Vehicle
+#from models import Person, Post
 
 app = Flask(__name__)
 app.url_map.strict_slashes = False
@@ -44,6 +44,63 @@ def handle_hello():
     }
 
     return jsonify(response_body), 200
+
+
+#### GET Endpoints
+
+@app.route('/users', methods=['GET'])
+def get_users():
+    all_users = User.query.all()
+    response_body = [user.serialize() for user in all_users]
+    return jsonify(response_body), 200
+
+#People
+
+@app.route('/people', methods=['GET'])
+def get_people():
+    people = People.query.all()
+    if not len(people) > 0:
+        return jsonify({"error": "not found"}), 404
+    response_body = list(map(lambda p: p.serialize(), people))
+    return jsonify(response_body), 200
+
+@app.route('/people/<int:people_id>', methods=['GET'])
+def get_person(people_id):
+    person = People.query.get(people_id)
+    if person is None:
+        return jsonify({"error": "not found"}), 404
+    return jsonify(person.serialize()), 200
+
+#Planets
+
+@app.route('/planets', methods=['GET'])
+def get_all_planets():
+    planets = Planets.query.all()
+    if not len(planets) > 0:
+        return jsonify({"error": "not found"}), 404
+    response_body = [planet.serialize() for planet in planets]
+    return jsonify(response_body), 200
+
+@app.route('/planets/<int:planet_id>', methods=['GET'])
+def get_planet(planet_id):
+
+    planet = Planets.query.get(planet_id)
+    if not planet:
+        return jsonify({"error": "not found"}), 404
+    return jsonify(planet.serialize()), 200
+
+
+#### POST 
+
+#### DELETE 
+
+######### FAVORITES
+
+#### GET 
+
+#### POST 
+
+#### DELETE 
 
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
