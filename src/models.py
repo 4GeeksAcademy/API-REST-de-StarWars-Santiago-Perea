@@ -92,7 +92,7 @@ class Favorites(db.Model):
 
 class FavoritePlanet(Favorites):
     __tablename__ = "favoritesplanets"
-    id: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[int] = mapped_column(ForeignKey("favorites.id"), primary_key = True)
     planet_id: Mapped[int] = mapped_column(ForeignKey("planet.id"))
     planet: Mapped["Planet"] = relationship(back_populates="favorite_planet")
 
@@ -104,12 +104,12 @@ class FavoritePlanet(Favorites):
 
 class FavoritePeople(Favorites):
     __tablename__ = "favoritespeople"
-    id: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[int] = mapped_column(ForeignKey("favorites.id"), primary_key = True)
     people_id: Mapped[int] = mapped_column(ForeignKey("people.id"))
     people: Mapped["People"] = relationship(back_populates="favorite_people")
 
     def serialize(self):
         return{
             "user_id": self.user_id,
-            "planeta_id": self.planeta_id
+            "people_id": self.people_id
         }
